@@ -7,7 +7,7 @@
  */
 
 package io.github.padconnect.ui.main.elements
-
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -56,6 +56,7 @@ fun AnalogStick(
     onSelect: () -> Unit = {},
     onUpdate: (AnalogStickElement) -> Unit = {}
 ) {
+
     val density = LocalDensity.current
     val screenWidthPx = with(density) { screenWidth.toPx() }
     val screenHeightPx = with(density) { screenHeight.toPx() }
@@ -63,7 +64,7 @@ fun AnalogStick(
     val sizeDp = screenWidth * dpad.size
     val sizePx = screenWidthPx * dpad.size
     val radius = sizePx / 2f
-
+    
     val latestDpad by rememberUpdatedState(dpad)
 
     var localX by remember(dpad.id) { mutableFloatStateOf(dpad.x) }
@@ -166,16 +167,23 @@ fun AnalogStick(
 
                                 val x = (clamped.x / radius).coerceIn(-1f, 1f)
                                 val y = (-clamped.y / radius).coerceIn(-1f, 1f)
-
-                                transport?.setLeftAxis(x, y)
+                                // Log.d("NAV_DEBUG",dpad.id)
+                                if (dpad.id == "analog_stickR"){
+                                transport?.setRightAxis(x, y)    
+                                        }
+                                else{
+                                transport?.setLeftAxis(x, y)}
                             }
 
                             if (change.id == activePointer && change.changedToUp()) {
                                 activePointer = null
                                 controlPointers.remove(change.id)
                                 knobOffset = Offset.Zero
-
-                                transport?.setLeftAxis(0f, 0f)
+                                 if (dpad.id == "analog_stickR"){
+                                transport?.setRightAxis(0f, 0f)    
+                                        }
+                                else{
+                                transport?.setLeftAxis(0f, 0f)}
                             }
                         }
                     }
